@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Manage Books{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="card shadow-sm rounded p-4">
+            <h1 class="h3 mb-4 text-primary"><i class="bi bi-journal-bookmark me-2"></i>Book Management</h1>
+
+            {% if books|length > 0 %}
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead class="table-dark">
+                        <tr>
+                            <th scope="col"><i class="bi bi-book"></i> Title</th>
+                            <th scope="col"><i class="bi bi-person"></i> Author</th>
+                            <th scope="col"><i class="bi bi-tags"></i> Genre</th>
+                            <th scope="col"><i class="bi bi-file-earmark-text"></i> Pages</th>
+                            <th scope="col"><i class="bi bi-tools"></i> Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for book in books %}
+                            <tr>
+                                <td>{{ book.title }}</td>
+                                <td>{{ book.author }}</td>
+                                <td>{{ book.genre }}</td>
+                                <td>{{ book.pages }}</td>
+                                <td>
+                                    <a href="{{ path('admin_edit_book', { id: book.id }) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil-square"></i> Edit
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">No books available to manage.</div>
+            {% endif %}
+
+            <a href="{{ path('app_admin') }}" class="btn btn-secondary mt-3"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
+        </div>
+    </div>
+{% endblock %}

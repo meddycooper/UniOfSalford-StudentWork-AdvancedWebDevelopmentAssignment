@@ -1,0 +1,151 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="card shadow-sm rounded p-4">
+            <h1 class="h3 mb-3 text-primary"><i class="bi bi-speedometer2 me-2"></i>Admin Dashboard</h1>
+            <p class="mb-4">Welcome, admin! Use the links below to manage the application.</p>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <a href="{{ path('admin_users') }}" class="btn btn-outline-dark w-100 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-people me-2"></i>Manage Users
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="{{ path('admin_books') }}" class="btn btn-outline-dark w-100 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-book-half me-2"></i>Manage Books
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="{{ path('admin_reviews') }}" class="btn btn-outline-dark w-100 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-chat-dots me-1"></i>Manage Reviews
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Most Reviewed Books -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        Most Reviewed Books
+                    </div>
+                    <div class="card-body">
+                        <canvas id="mostReviewedChart"></canvas>
+                        <ul class="list-group list-group-flush mt-3">
+                            {% for item in mostReviewedBooks %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ item[0].title }}
+                                    <span class="badge bg-primary rounded-pill">{{ item.reviewsCount }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Rated Books -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        Top Rated Books
+                    </div>
+                    <div class="card-body">
+                        <canvas id="topRatedChart"></canvas>
+                        <ul class="list-group list-group-flush mt-3">
+                            {% for item in topRatedBooks %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ item[0].title }}
+                                    <span class="badge bg-success rounded-pill">
+                                        {{ item.avgRating is not null ? item.avgRating|number_format(2) : 'N/A' }}
+                                    </span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Most Active Users -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-warning text-dark">
+                        Most Active Users
+                    </div>
+                    <div class="card-body">
+                        <canvas id="mostActiveUsersChart"></canvas>
+                        <ul class="list-group list-group-flush mt-3">
+                            {% for item in mostActiveUsers %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ item[0].username ?: item[0].email }}
+                                    <span class="badge bg-warning text-dark rounded-pill">{{ item.reviewsCount }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Most Reviewed Books Chart
+        const mostReviewedCtx = document.getElementById('mostReviewedChart').getContext('2d');
+        const mostReviewedChart = new Chart(mostReviewedCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ mostReviewedBooks|map(item => item[0].title)|json_encode()|raw }},
+                datasets: [{
+                    label: 'Number of Reviews',
+                    data: {{ mostReviewedBooks|map(item => item.reviewsCount)|json_encode()|raw }},
+                    backgroundColor: 'rgba(13,110,253,0.7)'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true, precision: 0 } }
+            }
+        });
+
+        // Top Rated Books Chart
+        const topRatedCtx = document.getElementById('topRatedChart').getContext('2d');
+        const topRatedChart = new Chart(topRatedCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ topRatedBooks|map(item => item[0].title)|json_encode()|raw }},
+                datasets: [{
+                    label: 'Average Rating',
+                    data: {{ topRatedBooks|map(item => item.avgRating ?: 0)|json_encode()|raw }},
+                    backgroundColor: 'rgba(25,135,84,0.7)'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true, max: 5 } }
+            }
+        });
+
+        // Most Active Users Chart
+        const mostActiveUsersCtx = document.getElementById('mostActiveUsersChart').getContext('2d');
+        const mostActiveUsersChart = new Chart(mostActiveUsersCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ mostActiveUsers|map(item => item[0].username ?: item[0].email)|json_encode()|raw }},
+                datasets: [{
+                    label: 'Reviews Written',
+                    data: {{ mostActiveUsers|map(item => item.reviewsCount)|json_encode()|raw }},
+                    backgroundColor: 'rgba(255,193,7,0.7)'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true, precision: 0 } }
+            }
+        });
+    </script>
+{% endblock %}

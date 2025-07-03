@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Manage Reviews{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="mb-4">Manage Reviews</h1>
+
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">{{ message }}</div>
+        {% endfor %}
+
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead>
+                <tr>
+                    <th>Review ID</th>
+                    <th>Book</th>
+                    <th class="d-none d-md-table-cell">User</th>
+                    <th class="d-none d-md-table-cell">Rating</th>
+                    <th>Content</th>
+                    <th class="d-none d-sm-table-cell">Flagged</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for review in reviews %}
+                    <tr>
+                        <td>{{ review.id }}</td>
+                        <td>{{ review.book.title }}</td>
+                        <td class="d-none d-md-table-cell">{{ review.user.username ?: review.user.email }}</td>
+                        <td class="d-none d-md-table-cell">{{ review.rating }}</td>
+                        <td title="{{ review.reviewText }}">
+                            {{ review.reviewText|length > 50 ? review.reviewText|slice(0, 50) ~ '...' : review.reviewText }}
+                        </td>
+                        <td class="d-none d-sm-table-cell">
+                            {% if review.flagged %}
+                                <span class="badge bg-danger">Flagged</span>
+                            {% else %}
+                                <span class="badge bg-secondary">No</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex gap-1 flex-wrap">
+                                <form action="{{ path('admin_toggle_flag_review', {id: review.id}) }}" method="post">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('flag-review' ~ review.id) }}">
+                                    <button class="btn btn-sm {{ review.flagged ? 'btn-secondary' : 'btn-warning' }}" type="submit"
+                                            title="{{ review.flagged ? 'Unflag review' : 'Flag review' }}">
+                                        <i class="bi {{ review.flagged ? 'bi-flag-fill' : 'bi-flag' }}"></i>
+                                    </button>
+                                </form>
+
+                                <form action="{{ path('admin_delete_review', {id: review.id}) }}" method="post"
+                                      onsubmit="return confirm('Are you sure you want to delete this review?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete-review' ~ review.id) }}">
+                                    <button class="btn btn-sm btn-danger" type="submit" title="Delete review">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center">No reviews found.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <a href="{{ path('app_admin') }}" class="btn btn-secondary mt-3"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Search Books{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow">
+                    <div class="card-header bg-info text-white">
+                        <h4 class="mb-0"><i class="bi bi-search me-2"></i>Search Books</h4>
+                    </div>
+                    <div class="card-body">
+                        {{ form_start(form) }}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                {{ form_label(form.title) }}
+                                {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_label(form.author) }}
+                                {{ form_widget(form.author, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_label(form.genre) }}
+                                {{ form_widget(form.genre, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_label(form.rating) }}
+                                {{ form_widget(form.rating, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_label(form.minPages) }}
+                                {{ form_widget(form.minPages, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_label(form.maxPages) }}
+                                {{ form_widget(form.maxPages, {'attr': {'class': 'form-control'}}) }}
+                            </div>
+                        </div>
+                        <div class="mt-4 text-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-search me-1"></i> Search
+                            </button>
+                        </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+
+                <div class="mt-5">
+                    <h4 class="mb-4">Results:</h4>
+                    {% if books is empty %}
+                        <div class="alert alert-warning">
+                            <i class="bi bi-emoji-frown me-1"></i>No books found matching your search criteria.
+                        </div>
+                    {% else %}
+                        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                            {% for book in books %}
+                                <div class="col">
+                                    <div class="card h-100 shadow-sm">
+                                        {% if book.coverImage %}
+                                            <img src="{{ asset('uploads/covers/' ~ book.coverImage) }}" class="card-img-top" alt="Cover of {{ book.title }}">
+                                        {% endif %}
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ book.title }}</h5>
+                                            <p class="card-text">
+                                                <strong>Author:</strong> {{ book.author }}<br>
+                                                <strong>Genre:</strong> {{ book.genre }}<br>
+                                                <strong>Pages:</strong> {{ book.pages }}<br>
+                                                <strong>Rating:</strong>
+                                                {% if book.averageRating is not null %}
+                                                    {% for i in 1..book.averageRating %}
+                                                        <i class="bi bi-star-fill text-warning"></i>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <span class="text-muted">No ratings yet</span>
+                                                {% endif %}
+                                            </p>
+                                        </div>
+                                        <div class="card-footer text-end bg-light">
+                                            <a href="{{ path('book_show', {'id': book.id}) }}" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-book me-1"></i> View Book
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

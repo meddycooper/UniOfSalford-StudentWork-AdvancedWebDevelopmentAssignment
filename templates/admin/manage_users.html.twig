@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Manage Users{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="card shadow-sm rounded p-4">
+            <h1 class="h3 mb-4 text-primary"><i class="bi bi-people-fill me-2"></i>User Management</h1>
+
+            {% if users|length > 0 %}
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead class="table-dark">
+                        <tr>
+                            <th scope="col"><i class="bi bi-envelope"></i> Email</th>
+                            <th scope="col"><i class="bi bi-shield-lock"></i> Roles</th>
+                            <th scope="col"><i class="bi bi-tools"></i> Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.roles|join(', ') }}</td>
+                                <td>
+                                    <a href="{{ path('admin_edit_user', { id: user.id }) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil-square"></i> Edit Roles
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">No users found in the system.</div>
+            {% endif %}
+
+            <a href="{{ path('app_admin') }}" class="btn btn-secondary mt-3">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+{% endblock %}

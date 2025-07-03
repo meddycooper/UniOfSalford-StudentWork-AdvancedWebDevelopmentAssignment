@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="mb-4">My Profile</h1>
+
+        {% if user.profilePicture %}
+            <img src="{{ asset('uploads/profile_pictures/' ~ user.profilePicture) }}" class="rounded mb-3" style="max-height:150px;" alt="Profile Picture">
+        {% endif %}
+
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Location:</strong> {{ user.location ?: 'Not set' }}</p>
+        <p><strong>Joined:</strong> {{ user.joinedAt|date('F j, Y') }}</p>
+        <p><strong>Bio:</strong> {{ user.bio ?: 'No bio provided.' }}</p>
+
+        <a href="{{ path('app_profile_edit') }}" class="btn btn-primary mt-3">Edit Profile</a>
+    </div>
+{% endblock %}
