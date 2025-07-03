@@ -1,5 +1,7 @@
 # UniOfSalford-StudentWork-AdvancedWebDevelopmentAssignment
-Advanced Web Development Assignment(1&amp;2) - Library website using API's and Google Books. Uses Symfony
+Advanced Web Development Assignment(1&amp;2) - Library website using API's and Google Books. Uses Symfony.
+
+Only providing the src and templates files. Too many bundles to upload the entire file.
 
 Assignent 1 Brief: 
 Core Requirements
