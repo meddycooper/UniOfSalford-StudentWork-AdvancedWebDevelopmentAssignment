@@ -29,7 +29,7 @@ class BookApiController extends AbstractController
         $response = $client->request('GET', 'https://www.googleapis.com/books/v1/volumes', [
             'query' => [
                 'q' => $queryParam,
-                'key' => 'AIzaSyADCFpacAi2WExIWu1QpZfkaZcXp5P869Q',
+                'key' => 'my key',
                 'maxResults' => 10,
             ]
         ]);
