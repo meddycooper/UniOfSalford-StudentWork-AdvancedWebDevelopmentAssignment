@@ -13,9 +13,12 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\RememberMeBadge
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
-use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
+/**
+ * Safe-to-share version of LoginFormAuthenticator for public repositories.
+ * No real authentication is performed; payload handling is mocked.
+ */
 class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
@@ -28,15 +31,17 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 
     public function authenticate(Request $request): Passport
     {
-        $email = $request->getPayload()->getString('email');
+        // Mock email and password values for safety
+        $email = 'user@example.com';
+        $password = 'dummy_password';
 
-        $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $email);
+        $request->getSession()->set('_security.last_username', $email);
 
         return new Passport(
             new UserBadge($email),
-            new PasswordCredentials($request->getPayload()->getString('password')),
+            new PasswordCredentials($password),
             [
-                new CsrfTokenBadge('authenticate', $request->getPayload()->getString('_csrf_token')),
+                new CsrfTokenBadge('authenticate', 'dummy_csrf_token'),
                 new RememberMeBadge(),
             ]
         );
@@ -44,13 +49,13 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        // Check if there's a target path saved (for example, if the user was redirected to login)
+        // Mock redirection logic
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
         }
 
-        // If no target path, redirect to the book page after successful login
-        return new RedirectResponse($this->urlGenerator->generate('app_book')); // Replace 'app_book' with your actual route name for the book page
+        // Redirect to a safe example route
+        return new RedirectResponse($this->urlGenerator->generate('app_book'));
     }
 
     protected function getLoginUrl(Request $request): string
