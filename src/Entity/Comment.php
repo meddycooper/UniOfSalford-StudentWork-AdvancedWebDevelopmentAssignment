@@ -6,6 +6,7 @@ use App\Repository\CommentRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
 class Comment
 {
@@ -26,8 +27,9 @@ class Comment
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'replies')]
     private ?Comment $parent = null;
 
-    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class, cascade: ['remove'])]
+    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class, cascade: ['remove'], orphanRemoval: true)]
     private Collection $replies;
+
     #[ORM\Column(type: 'datetime')]
     private \DateTimeInterface $createdAt;
 
@@ -36,17 +38,16 @@ class Comment
         $this->replies = new ArrayCollection();
         $this->createdAt = new \DateTime();
     }
+
+    // -------------------------
+    // Getters and Setters
+    // -------------------------
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(int $id): static
-    {
-        $this->id = $id;
-
-        return $this;
-    }
     public function getContent(): ?string
     {
         return $this->content;
@@ -57,42 +58,82 @@ class Comment
         $this->content = $content;
         return $this;
     }
-    // inside Comment.php
 
     public function getReview(): Review
     {
         return $this->review;
     }
 
-    public function setReview(Review $review): self
+    public function setReview(Review $review): static
     {
         $this->review = $review;
         return $this;
     }
+
     public function getAuthor(): User
     {
         return $this->author;
     }
 
-    public function setAuthor(User $author): self
+    public function setAuthor(User $author): static
     {
         $this->author = $author;
         return $this;
     }
+
+    public function getParent(): ?Comment
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?Comment $parent): static
+    {
+        $this->parent = $parent;
+        return $this;
+    }
+
+    public function getReplies(): Collection
+    {
+        return $this->replies;
+    }
+
     public function getCreatedAt(): \DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    public function setCreatedAt(\DateTimeInterface $createdAt): static
     {
         $this->createdAt = $createdAt;
         return $this;
     }
-    // src/Entity/Comment.php
 
-    public function getReplies(): Collection
+    // -------------------------
+    // Helper methods for replies
+    // -------------------------
+
+    /**
+     * Add a reply to this comment
+     */
+    public function addReply(Comment $reply): static
     {
-        return $this->replies;
+        if (!$this->replies->contains($reply)) {
+            $this->replies[] = $reply;
+            $reply->setParent($this);
+        }
+        return $this;
+    }
+
+    /**
+     * Remove a reply from this comment
+     */
+    public function removeReply(Comment $reply): static
+    {
+        if ($this->replies->removeElement($reply)) {
+            if ($reply->getParent() === $this) {
+                $reply->setParent(null);
+            }
+        }
+        return $this;
     }
 }
