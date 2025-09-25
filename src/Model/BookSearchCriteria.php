@@ -2,6 +2,10 @@
 
 namespace App\Model;
 
+/**
+ * A simple model to hold book search criteria.
+ * Safe for public sharing – no sensitive links to your project data.
+ */
 class BookSearchCriteria
 {
     public ?string $title = null;
