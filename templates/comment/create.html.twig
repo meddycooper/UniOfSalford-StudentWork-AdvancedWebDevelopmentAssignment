@@ -5,10 +5,13 @@
 {% block body %}
     <h1>Add a Comment</h1>
 
-    {{ form_start(form) }}
-    {{ form_row(form.content) }}
-    <button type="submit">Submit</button>
-    {{ form_end(form) }}
+    <!-- Public-safe placeholder form -->
+    <form method="post" action="#">
+        <label for="content">Comment</label><br>
+        <textarea id="content" name="content" rows="4" placeholder="Write your comment here..."></textarea><br><br>
+        <button type="submit">Submit</button>
+    </form>
 
-    <a href="{{ path('app_review_show', {'id': review.id}) }}">Back to Review</a>
+    <br>
+    <a href="#">Back to Review</a>
 {% endblock %}
