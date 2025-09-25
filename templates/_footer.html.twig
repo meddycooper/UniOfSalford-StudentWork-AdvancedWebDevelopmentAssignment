@@ -1,51 +1,40 @@
-<footer class="footer-section bg-dark text-white text-center text-lg-start mt-5">    <div class="container p-4 text-center text-lg-start">
-        <div class="text-end mb-3">
-            <button onclick="toggleTheme()" class="button">Toggle Theme</button>
-        </div>
-        <div class="row">
-            <!-- Column 1 -->
-            <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
-                <h5 class="text-uppercase fw-bold">About</h5>
-                <p>
-                    Find and rate books through BookSite. Search Google Books to discover even more titles.
-                </p>
-            </div>
-            <!-- Column 2 -->
-            <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
-                <h5 class="text-uppercase fw-bold">Quick Links</h5>
-                <ul class="list-unstyled mb-0">
-                    <li><a href="{{ path('book_list') }}" class="footer-link"><i class="bi bi-house me-1"></i>Home</a></li>
-                    {% if app.user %}
-                        <li><a href="{{ path('book_new') }}" class="footer-link"><i class="bi bi-plus-square me-1"></i>Add Books</a></li>
-                        <li><a href="{{ path('user_reviews') }}" class="footer-link"><i class="bi bi-chat-dots me-1"></i>My Reviews</a></li>
-                    {% else %}
-                        <li><a href="{{ path('app_login') }}" class="footer-link"><i class="bi bi-plus-square me-1"></i>Add Books</a></li>
-                        <li><a href="{{ path('app_login') }}" class="footer-link"><i class="bi bi-chat-dots me-1"></i>My Reviews</a></li>
-                    {% endif %}
-                    <li>
-                        <a class="footer-link">
-                            <i class="bi bi-envelope-fill me-2"></i> meddycooper@outlook.com
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <!-- Column 3 -->
-            <div class="col-lg-4 col-md-12 mb-4 mb-md-0">
-                <h5 class="text-uppercase fw-bold">Follow Us</h5>
-                <a href="https://www.facebook.com/people/Meddy-Cooper/pfbid026Q2XzcApapLSbL25UGKttYddYnqi7TJ96Wf6vooTtK4WvZm8t8cky4AXLnjEcCDzl/" class="footer-link me-3">
-                    <i class="bi bi-facebook me-1"></i> Facebook
-                </a>
-                <br>
-                <a href="https://www.instagram.com/meddy_cooper/" class="footer-link me-3">
-                    <i class="bi bi-instagram me-1"></i> Instagram
-                </a>
-            </div>
-        </div>
+<footer>
+    <div>
+        <button onclick="toggleTheme()">Toggle Theme</button>
     </div>
-    <div class="footer-bottom text-center p-3">
+
+    <div>
+        <!-- About -->
+        <h5>About</h5>
+        <p>
+            Find and rate books through BookSite. Search Google Books to discover more titles.
+        </p>
+
+        <!-- Quick Links -->
+        <h5>Quick Links</h5>
+        <ul>
+            <li><a href="{{ path('book_list') }}">Home</a></li>
+            {% if app.user %}
+                <li><a href="{{ path('book_new') }}">Add Books</a></li>
+                <li><a href="{{ path('user_reviews') }}">My Reviews</a></li>
+            {% else %}
+                <li><a href="{{ path('app_login') }}">Add Books</a></li>
+                <li><a href="{{ path('app_login') }}">My Reviews</a></li>
+            {% endif %}
+            <li>Email: meddycooper@outlook.com</li>
+        </ul>
+
+        <!-- Social Links -->
+        <h5>Follow Us</h5>
+        <a href="https://www.facebook.com/people/Meddy-Cooper/pfbid026Q2XzcApapLSbL25UGKttYddYnqi7TJ96Wf6vooTtK4WvZm8t8cky4AXLnjEcCDzl/">Facebook</a><br>
+        <a href="https://www.instagram.com/meddy_cooper/">Instagram</a>
+    </div>
+
+    <div>
         © {{ "now"|date("Y") }} BookSite. All rights reserved.
     </div>
 </footer>
+
 <script>
     function toggleTheme() {
         document.body.classList.toggle("light-theme");
