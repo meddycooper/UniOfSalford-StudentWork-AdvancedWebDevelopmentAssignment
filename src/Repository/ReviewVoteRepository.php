@@ -2,42 +2,44 @@
 
 namespace App\Repository;
 
-use App\Entity\ReviewVote;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Model\ReviewVote;
 
 /**
- * @extends ServiceEntityRepository<ReviewVote>
+ * A safe-to-share repository skeleton for managing review votes.
+ * No connection to a private database or sensitive entities.
  */
-class ReviewVoteRepository extends ServiceEntityRepository
+class ReviewVoteRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    /**
+     * Simulates fetching all review votes.
+     *
+     * @return ReviewVote[]
+     */
+    public function findAll(): array
     {
-        parent::__construct($registry, ReviewVote::class);
+        // Return an empty array or mock data
+        return [];
     }
 
-    //    /**
-    //     * @return ReviewVote[] Returns an array of ReviewVote objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('r.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Example method for filtering review votes.
+     *
+     * @return ReviewVote[]
+     */
+    public function findByExampleField($value): array
+    {
+        // Pseudo-logic for public sharing
+        return [];
+    }
 
-    //    public function findOneBySomeField($value): ?ReviewVote
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Example method for fetching a single review vote.
+     *
+     * @return ReviewVote|null
+     */
+    public function findOneBySomeField($value): ?ReviewVote
+    {
+        // Pseudo-logic for public sharing
+        return null;
+    }
 }
