@@ -3,39 +3,20 @@
 {% block title %}List of Reviews{% endblock %}
 
 {% block body %}
-    <div class="container mt-5">
-        <h1 class="mb-4"><i class="bi bi-chat-square-text me-2"></i>Reviews</h1>
+    <h1>Reviews</h1>
 
-        {% if reviews is empty %}
-            <div class="alert alert-info">No reviews have been posted yet.</div>
-        {% else %}
-            <div class="row row-cols-1 g-4">
-                {% for review in reviews %}
-                    <div class="col">
-                        <div class="card shadow-sm h-100">
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    <i class="bi bi-book me-1"></i>{{ review.book.title }}
-                                    <small class="text-muted">by {{ review.book.author }}</small>
-                                </h5>
-                                <p class="card-text">{{ review.reviewText }}</p>
-                                <p class="mb-1"><strong>Rating:</strong>
-                                    {% for i in 1..5 %}
-                                        {% if i <= review.rating %}
-                                            <i class="bi bi-star-fill text-warning"></i>
-                                        {% else %}
-                                            <i class="bi bi-star text-muted"></i>
-                                        {% endif %}
-                                    {% endfor %}
-                                </p>
-                                <a href="{{ path('app_review_show', {'id': review.id}) }}" class="btn btn-sm btn-outline-primary mt-2">
-                                    <i class="bi bi-eye"></i> View
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    </div>
+    {% if reviews is empty %}
+        <p>No reviews have been posted yet.</p>
+    {% else %}
+        <ul>
+            {% for review in reviews %}
+                <li>
+                    <strong>{{ review.book.title }}</strong> by {{ review.book.author }}<br>
+                    {{ review.reviewText }}<br>
+                    Rating: {{ review.rating }}/5<br>
+                    <a href="{{ path('app_review_show', {'id': review.id}) }}">View Review</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 {% endblock %}
