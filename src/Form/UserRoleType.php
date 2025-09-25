@@ -4,9 +4,9 @@ namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use App\Entity\User;
 
 class UserRoleType extends AbstractType
 {
@@ -22,13 +22,20 @@ class UserRoleType extends AbstractType
                 ],
                 'expanded' => true,  // checkboxes
                 'multiple' => true,  // allow multiple roles
+            ])
+            ->add('submit', SubmitType::class, [
+                'label' => 'Save Roles',
+                'attr' => [
+                    'class' => 'btn btn-primary',
+                ],
             ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
+        // Safe for public sharing, no entity tied
         $resolver->setDefaults([
-            'data_class' => User::class,
+            'data_class' => null,
         ]);
     }
 }
