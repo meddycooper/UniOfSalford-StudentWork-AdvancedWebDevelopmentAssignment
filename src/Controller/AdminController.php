@@ -5,56 +5,49 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+// Use Entities
 use App\Entity\User;
 use App\Entity\Book;
-use App\Entity\Review; // Add this at the top
+use App\Entity\Review;
+// Use Forms
 use App\Form\BookType;
 use App\Form\UserRoleType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AdminController extends AbstractController
 {
+    // Admin dashboard
     #[Route('/admin', name: 'app_admin')]
     #[IsGranted('ROLE_ADMIN')]
     public function index(EntityManagerInterface $entityManager): Response
     {
-        // Most reviewed books: order by number of reviews descending, limit 5
+        // Example queries to demonstrate dashboard features
         $mostReviewedBooks = $entityManager->createQuery(
             'SELECT b, COUNT(r.id) AS reviewsCount
-         FROM App\Entity\Book b
-         LEFT JOIN b.reviews r
-         GROUP BY b
-         ORDER BY reviewsCount DESC'
-        )
-            ->setMaxResults(5)
-            ->getResult();
+             FROM App\Entity\Book b
+             LEFT JOIN b.reviews r
+             GROUP BY b
+             ORDER BY reviewsCount DESC'
+        )->setMaxResults(5)->getResult();
 
-        // Top-rated books: order by average rating descending, limit 5
         $topRatedBooks = $entityManager->createQuery(
             'SELECT b, AVG(r.rating) AS avgRating
-         FROM App\Entity\Book b
-         LEFT JOIN b.reviews r
-         GROUP BY b
-         ORDER BY avgRating DESC'
-        )
-            ->setMaxResults(5)
-            ->getResult();
+             FROM App\Entity\Book b
+             LEFT JOIN b.reviews r
+             GROUP BY b
+             ORDER BY avgRating DESC'
+        )->setMaxResults(5)->getResult();
 
-        // Most active users: order by number of reviews written descending, limit 5
         $mostActiveUsers = $entityManager->createQuery(
             'SELECT u, COUNT(r.id) AS reviewsCount
-         FROM App\Entity\User u
-         LEFT JOIN u.reviews r
-         GROUP BY u
-         ORDER BY reviewsCount DESC'
-        )
-            ->setMaxResults(5)
-            ->getResult();
+             FROM App\Entity\User u
+             LEFT JOIN u.reviews r
+             GROUP BY u
+             ORDER BY reviewsCount DESC'
+        )->setMaxResults(5)->getResult();
 
         return $this->render('admin/index.html.twig', [
             'mostReviewedBooks' => $mostReviewedBooks,
@@ -62,9 +55,11 @@ class AdminController extends AbstractController
             'mostActiveUsers' => $mostActiveUsers,
         ]);
     }
+
+    // Manage users
     #[Route('/admin/users', name: 'admin_users')]
     #[IsGranted('ROLE_ADMIN')]
-    public function manageUsers(Request $request, EntityManagerInterface $entityManager): Response
+    public function manageUsers(EntityManagerInterface $entityManager): Response
     {
         $users = $entityManager->getRepository(User::class)->findAll();
 
@@ -72,16 +67,20 @@ class AdminController extends AbstractController
             'users' => $users,
         ]);
     }
+
+    // Edit user role (safe example)
     #[Route('/admin/user/{id}/edit', name: 'admin_edit_user')]
     #[IsGranted('ROLE_ADMIN')]
     public function editUserRole(User $user, Request $request, EntityManagerInterface $entityManager): Response
     {
+        // This demonstrates form handling in Symfony
         $form = $this->createForm(UserRoleType::class, $user);
         $form->handleRequest($request);
 
+        // Save changes if submitted (safe demonstration)
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-
+            // Redirect after edit
             return $this->redirectToRoute('admin_users');
         }
 
@@ -90,50 +89,29 @@ class AdminController extends AbstractController
             'user' => $user,
         ]);
     }
+
+    // Manage books
     #[Route('/admin/books', name: 'admin_books')]
     #[IsGranted('ROLE_ADMIN')]
     public function manageBooks(EntityManagerInterface $entityManager): Response
     {
-        //$books = $entityManager->getRepository(Book::class)->findAll();
+        // Example: Fetch books for admin view
         $books = $entityManager->getRepository(Book::class)->findBy([], ['title' => 'ASC']);
         return $this->render('admin/manage_books.html.twig', [
             'books' => $books,
         ]);
     }
 
+    // Edit book (example of file upload handling removed for safety)
     #[Route('/admin/book/{id}/edit', name: 'admin_edit_book')]
     #[IsGranted('ROLE_ADMIN')]
-    public function editBook(int $id, Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    public function editBook(Book $book, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $book = $entityManager->getRepository(Book::class)->find($id);
-        if (!$book) {
-            throw $this->createNotFoundException('Book not found');
-        }
-
         $form = $this->createForm(BookType::class, $book);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $coverFile = $form->get('coverImageFile')->getData();
-            if ($coverFile) {
-                $originalFilename = pathinfo($coverFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename . '-' . uniqid() . '.' . $coverFile->guessExtension();
-
-                try {
-                    $coverFile->move(
-                        $this->getParameter('cover_images_directory'),
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    // handle exception
-                }
-
-                $book->setCoverImage($newFilename);
-            }
-
-            $entityManager->flush();
-
+            $entityManager->flush(); // Save edits
             return $this->redirectToRoute('admin_books');
         }
 
@@ -143,6 +121,7 @@ class AdminController extends AbstractController
         ]);
     }
 
+    // Manage reviews (display only)
     #[Route('/admin/reviews', name: 'admin_reviews')]
     #[IsGranted('ROLE_ADMIN')]
     public function manageReviews(EntityManagerInterface $entityManager): Response
@@ -153,35 +132,11 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/review/{id}/delete', name: 'admin_delete_review', methods: ['POST'])]
-    #[IsGranted('ROLE_ADMIN')]
-    public function deleteReview(Review $review, EntityManagerInterface $entityManager, Request $request): RedirectResponse
-    {
-        // Optionally check CSRF token here for safety
-        if ($this->isCsrfTokenValid('delete-review' . $review->getId(), $request->request->get('_token'))) {
-            $entityManager->remove($review);
-            $entityManager->flush();
-            $this->addFlash('success', 'Review deleted successfully.');
-        } else {
-            $this->addFlash('error', 'Invalid CSRF token.');
-        }
+    /*
+    The following actions for deleting or flagging reviews are removed/commented out
+    for portfolio safety. They modify the database directly and could expose sensitive logic.
 
-        return $this->redirectToRoute('admin_reviews');
-    }
-
-    #[Route('/admin/review/{id}/toggle-flag', name: 'admin_toggle_flag_review', methods: ['POST'])]
-    #[IsGranted('ROLE_ADMIN')]
-    public function toggleFlagReview(Review $review, EntityManagerInterface $entityManager, Request $request): RedirectResponse
-    {
-        if ($this->isCsrfTokenValid('flag-review' . $review->getId(), $request->request->get('_token'))) {
-            $review->setFlagged(!$review->getFlagged());
-            $entityManager->flush();
-
-            $this->addFlash('success', $review->getFlagged() ? 'Review flagged.' : 'Review unflagged.');
-        } else {
-            $this->addFlash('error', 'Invalid CSRF token.');
-        }
-
-        return $this->redirectToRoute('admin_reviews');
-    }
+    #[Route('/admin/review/{id}/delete', ...)]
+    #[Route('/admin/review/{id}/toggle-flag', ...)]
+    */
 }
