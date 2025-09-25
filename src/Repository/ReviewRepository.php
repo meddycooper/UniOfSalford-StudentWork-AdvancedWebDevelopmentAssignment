@@ -2,42 +2,44 @@
 
 namespace App\Repository;
 
-use App\Entity\Review;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Model\Review;
 
 /**
- * @extends ServiceEntityRepository<Review>
+ * A safe-to-share repository skeleton for managing reviews.
+ * No connection to a private database or sensitive entities.
  */
-class ReviewRepository extends ServiceEntityRepository
+class ReviewRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    /**
+     * Simulates fetching all reviews.
+     *
+     * @return Review[]
+     */
+    public function findAll(): array
     {
-        parent::__construct($registry, Review::class);
+        // Return an empty array or mock data
+        return [];
     }
 
-    //    /**
-    //     * @return Review[] Returns an array of Review objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('r.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Example method for filtering reviews.
+     *
+     * @return Review[]
+     */
+    public function findByExampleField($value): array
+    {
+        // Pseudo-logic for public sharing
+        return [];
+    }
 
-    //    public function findOneBySomeField($value): ?Review
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Example method for fetching a single review.
+     *
+     * @return Review|null
+     */
+    public function findOneBySomeField($value): ?Review
+    {
+        // Pseudo-logic for public sharing
+        return null;
+    }
 }
