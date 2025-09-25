@@ -3,27 +3,15 @@
 {% block title %}Create a Review{% endblock %}
 
 {% block body %}
-    <div class="container mt-5" style="max-width: 600px;">
-        <h1 class="mb-4"><i class="bi bi-pencil-square me-2"></i>Create a Review for <em>{{ book.title }}</em></h1>
+    <h1>Create a Review for {{ book.title }}</h1>
 
-        <div class="card shadow-sm">
-            <div class="card-body">
-                {{ form_start(form) }}
+    {{ form_start(form) }}
 
-                {{ form_row(form.review_text, {
-                    attr: {'class': 'form-control'}
-                }) }}
+    {{ form_row(form.review_text) }}
 
-                {{ form_row(form.rating, {
-                    attr: {'class': 'form-select'}
-                }) }}
+    {{ form_row(form.rating) }}
 
-                <button type="submit" class="btn btn-success w-100 mt-3">
-                    <i class="bi bi-send me-1"></i> Submit Review
-                </button>
+    <button type="submit">Submit Review</button>
 
-                {{ form_end(form) }}
-            </div>
-        </div>
-    </div>
+    {{ form_end(form) }}
 {% endblock %}
