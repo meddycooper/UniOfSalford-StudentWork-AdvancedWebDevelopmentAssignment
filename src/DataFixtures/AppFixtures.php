@@ -24,7 +24,7 @@ class AppFixtures extends Fixture
         // Log the execution
         dump('Creating admin user...');
 
-        $hashedPassword = $this->passwordHasher->hash('password'); // Replace with your desired password
+        $hashedPassword = $this->passwordHasher->hashPassword($user, 'password');
         $user->setPassword($hashedPassword);
         $user->setRoles(['ROLE_ADMIN']); // Assign role
 
