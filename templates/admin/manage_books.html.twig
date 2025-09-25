@@ -7,7 +7,13 @@
         <div class="card shadow-sm rounded p-4">
             <h1 class="h3 mb-4 text-primary"><i class="bi bi-journal-bookmark me-2"></i>Book Management</h1>
 
-            {% if books|length > 0 %}
+            {% set dummyBooks = [
+                {'title':'Sample Book 1','author':'Author A','genre':'Fiction','pages':120},
+                {'title':'Sample Book 2','author':'Author B','genre':'Non-Fiction','pages':200},
+                {'title':'Sample Book 3','author':'Author C','genre':'Fantasy','pages':350}
+            ] %}
+
+            {% if dummyBooks|length > 0 %}
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover align-middle">
                         <thead class="table-dark">
@@ -20,14 +26,14 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for book in books %}
+                        {% for book in dummyBooks %}
                             <tr>
                                 <td>{{ book.title }}</td>
                                 <td>{{ book.author }}</td>
                                 <td>{{ book.genre }}</td>
                                 <td>{{ book.pages }}</td>
                                 <td>
-                                    <a href="{{ path('admin_edit_book', { id: book.id }) }}" class="btn btn-sm btn-outline-primary">
+                                    <a href="#" class="btn btn-sm btn-outline-primary">
                                         <i class="bi bi-pencil-square"></i> Edit
                                     </a>
                                 </td>
@@ -40,7 +46,7 @@
                 <div class="alert alert-info">No books available to manage.</div>
             {% endif %}
 
-            <a href="{{ path('app_admin') }}" class="btn btn-secondary mt-3"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
+            <a href="#" class="btn btn-secondary mt-3"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
         </div>
     </div>
 {% endblock %}
