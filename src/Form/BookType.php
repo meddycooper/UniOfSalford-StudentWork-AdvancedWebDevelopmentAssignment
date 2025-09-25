@@ -20,7 +20,7 @@ class BookType extends AbstractType
     {
         $builder
             ->add('coverImageFile', FileType::class, [
-                'label' => 'Book Cover Image',
+                'label' => 'Cover Image',
                 'mapped' => false,
                 'required' => false,
                 'help' => 'Optional. Upload a JPEG or PNG image (max 2MB).',
@@ -28,51 +28,39 @@ class BookType extends AbstractType
                     new File([
                         'maxSize' => '2M',
                         'mimeTypes' => ['image/jpeg', 'image/png'],
-                        'mimeTypesMessage' => 'Please upload a valid image (JPEG/PNG).',
+                        'mimeTypesMessage' => 'Please upload a valid image file (JPEG/PNG).',
                     ]),
                 ],
             ])
             ->add('title', TextType::class, [
-                'label' => 'Book Title',
-                'attr' => [
-                    'placeholder' => 'Enter the book title',
-                ],
+                'label' => 'Title',
+                'attr' => ['placeholder' => 'Book title'],
             ])
             ->add('author', TextType::class, [
-                'label' => 'Author Name',
-                'attr' => [
-                    'placeholder' => 'Enter author name',
-                ],
+                'label' => 'Author',
+                'attr' => ['placeholder' => 'Author name'],
             ])
             ->add('genre', TextType::class, [
                 'label' => 'Genre',
-                'attr' => [
-                    'placeholder' => 'e.g., Fiction, Fantasy, Sci-Fi',
-                ],
+                'attr' => ['placeholder' => 'Book genre'],
             ])
             ->add('summary', TextareaType::class, [
                 'label' => 'Summary',
                 'attr' => [
-                    'placeholder' => 'Write a brief summary of the book',
+                    'placeholder' => 'Brief summary of the book',
                     'rows' => 5,
                 ],
             ])
             ->add('pages', IntegerType::class, [
-                'label' => 'Number of Pages',
+                'label' => 'Pages',
                 'constraints' => [
-                    new Positive([
-                        'message' => 'The number of pages must be a positive integer.',
-                    ]),
+                    new Positive(['message' => 'Pages must be a positive number.']),
                 ],
-                'attr' => [
-                    'placeholder' => 'Enter total pages',
-                ],
+                'attr' => ['placeholder' => 'Number of pages'],
             ])
             ->add('save', SubmitType::class, [
-                'label' => 'Save Book',
-                'attr' => [
-                    'class' => 'btn btn-primary',
-                ],
+                'label' => 'Save',
+                'attr' => ['class' => 'btn btn-primary'],
             ]);
     }
 
