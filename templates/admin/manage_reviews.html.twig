@@ -6,12 +6,15 @@
     <div class="container mt-5">
         <h1 class="mb-4">Manage Reviews</h1>
 
-        {% for message in app.flashes('success') %}
-            <div class="alert alert-success">{{ message }}</div>
-        {% endfor %}
-        {% for message in app.flashes('error') %}
-            <div class="alert alert-danger">{{ message }}</div>
-        {% endfor %}
+        {# Flash messages (dummy) #}
+        <div class="alert alert-success">Sample success message</div>
+        <div class="alert alert-danger">Sample error message</div>
+
+        {% set dummyReviews = [
+            {'id': 1, 'book': {'title':'Sample Book 1'}, 'user': {'username':'user1','email':'user1@example.com'}, 'rating':4, 'reviewText':'This is a sample review text for demonstration purposes.', 'flagged': false},
+            {'id': 2, 'book': {'title':'Sample Book 2'}, 'user': {'username':'user2','email':'user2@example.com'}, 'rating':5, 'reviewText':'Another sample review text that is slightly longer to show truncation in table.', 'flagged': true},
+            {'id': 3, 'book': {'title':'Sample Book 3'}, 'user': {'username':'user3','email':'user3@example.com'}, 'rating':3, 'reviewText':'Short review.', 'flagged': false}
+        ] %}
 
         <div class="table-responsive">
             <table class="table table-striped align-middle">
@@ -27,7 +30,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for review in reviews %}
+                {% for review in dummyReviews %}
                     <tr>
                         <td>{{ review.id }}</td>
                         <td>{{ review.book.title }}</td>
@@ -45,21 +48,13 @@
                         </td>
                         <td>
                             <div class="d-flex gap-1 flex-wrap">
-                                <form action="{{ path('admin_toggle_flag_review', {id: review.id}) }}" method="post">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('flag-review' ~ review.id) }}">
-                                    <button class="btn btn-sm {{ review.flagged ? 'btn-secondary' : 'btn-warning' }}" type="submit"
-                                            title="{{ review.flagged ? 'Unflag review' : 'Flag review' }}">
-                                        <i class="bi {{ review.flagged ? 'bi-flag-fill' : 'bi-flag' }}"></i>
-                                    </button>
-                                </form>
-
-                                <form action="{{ path('admin_delete_review', {id: review.id}) }}" method="post"
-                                      onsubmit="return confirm('Are you sure you want to delete this review?');">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete-review' ~ review.id) }}">
-                                    <button class="btn btn-sm btn-danger" type="submit" title="Delete review">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
+                                <button class="btn btn-sm {{ review.flagged ? 'btn-secondary' : 'btn-warning' }}" type="button"
+                                        title="{{ review.flagged ? 'Unflag review' : 'Flag review' }}">
+                                    <i class="bi {{ review.flagged ? 'bi-flag-fill' : 'bi-flag' }}"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" type="button" title="Delete review">
+                                    <i class="bi bi-trash"></i>
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -70,7 +65,7 @@
                 {% endfor %}
                 </tbody>
             </table>
-            <a href="{{ path('app_admin') }}" class="btn btn-secondary mt-3"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
+            <a href="#" class="btn btn-secondary mt-3"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
         </div>
     </div>
 {% endblock %}
