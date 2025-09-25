@@ -7,7 +7,13 @@
         <div class="card shadow-sm rounded p-4">
             <h1 class="h3 mb-4 text-primary"><i class="bi bi-people-fill me-2"></i>User Management</h1>
 
-            {% if users|length > 0 %}
+            {% set dummyUsers = [
+                {'email':'user1@example.com','roles':['ROLE_USER']},
+                {'email':'moderator@example.com','roles':['ROLE_USER','ROLE_MODERATOR']},
+                {'email':'admin@example.com','roles':['ROLE_USER','ROLE_ADMIN']}
+            ] %}
+
+            {% if dummyUsers|length > 0 %}
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover align-middle">
                         <thead class="table-dark">
@@ -18,12 +24,12 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for user in users %}
+                        {% for user in dummyUsers %}
                             <tr>
                                 <td>{{ user.email }}</td>
                                 <td>{{ user.roles|join(', ') }}</td>
                                 <td>
-                                    <a href="{{ path('admin_edit_user', { id: user.id }) }}" class="btn btn-sm btn-outline-primary">
+                                    <a href="#" class="btn btn-sm btn-outline-primary">
                                         <i class="bi bi-pencil-square"></i> Edit Roles
                                     </a>
                                 </td>
@@ -36,7 +42,7 @@
                 <div class="alert alert-info">No users found in the system.</div>
             {% endif %}
 
-            <a href="{{ path('app_admin') }}" class="btn btn-secondary mt-3">
+            <a href="#" class="btn btn-secondary mt-3">
                 <i class="bi bi-arrow-left"></i> Back to Dashboard
             </a>
         </div>
