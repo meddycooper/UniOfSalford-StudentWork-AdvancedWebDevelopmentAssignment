@@ -10,11 +10,11 @@
             <img src="{{ asset('uploads/profile_pictures/' ~ user.profilePicture) }}" class="rounded mb-3" style="max-height:150px;" alt="Profile Picture">
         {% endif %}
 
-        <p><strong>Username:</strong> {{ user.username }}</p>
-        <p><strong>Email:</strong> {{ user.email }}</p>
-        <p><strong>Location:</strong> {{ user.location ?: 'Not set' }}</p>
-        <p><strong>Joined:</strong> {{ user.joinedAt|date('F j, Y') }}</p>
-        <p><strong>Bio:</strong> {{ user.bio ?: 'No bio provided.' }}</p>
+        <p><strong>Username:</strong> {{ dummy }}</p>
+        <p><strong>Email:</strong> {{ dummy }}</p>
+        <p><strong>Location:</strong> {{ dummy.location ?: 'Not set' }}</p>
+        <p><strong>Joined:</strong> {{ dummy.joinedAt|date('F j, Y') }}</p>
+        <p><strong>Bio:</strong> {{ dummy.bio ?: 'No bio provided.' }}</p>
 
         <a href="{{ path('app_profile_edit') }}" class="btn btn-primary mt-3">Edit Profile</a>
     </div>
