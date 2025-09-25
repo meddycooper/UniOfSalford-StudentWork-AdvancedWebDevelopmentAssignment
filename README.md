@@ -63,6 +63,10 @@ This repo is intended to **showcase the structure and coding style** of a Symfon
 
 ---
 
+## Questions?
+I am happy to give more information about my work and skills.
+I will not give out answers for the assignments.
+
 ## Disclaimer
 
 This is **not a runnable copy of the original assignment**.  
