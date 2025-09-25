@@ -15,9 +15,7 @@ use Doctrine\Common\Collections\Collection;
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Id, ORM\GeneratedValue, ORM\Column(type: 'integer')]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
@@ -47,11 +45,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $location = null;
 
-    // One-to-many relationship with Review
+    // Relationships
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Review::class)]
     private Collection $reviews;
 
-    #[ORM\OneToMany(targetEntity: ReviewVote::class, mappedBy: 'user', orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ReviewVote::class, orphanRemoval: true)]
     private Collection $reviewVotes;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Favorite::class, orphanRemoval: true)]
@@ -60,10 +58,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->reviews = new ArrayCollection();
-        $this->joinedAt = new \DateTimeImmutable();
         $this->reviewVotes = new ArrayCollection();
         $this->favorites = new ArrayCollection();
+        $this->joinedAt = new \DateTimeImmutable();
     }
+
+    // -------------------------
+    // Basic getters and setters
+    // -------------------------
 
     public function getId(): ?int
     {
@@ -93,7 +95,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
-    public function setRoles(array $roles): self
+    public function setRoles(array $roles): static
     {
         $this->roles = $roles;
         return $this;
@@ -112,7 +114,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials(): void
     {
-        // Clear any temporary sensitive data if needed
+        // No temporary sensitive data to clear
     }
 
     public function isVerified(): bool
@@ -126,11 +128,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    // One-to-many getter for reviews
-    public function getReviews(): Collection
-    {
-        return $this->reviews;
-    }
     public function getUsername(): ?string
     {
         return $this->username;
@@ -185,57 +182,26 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->location = $location;
         return $this;
     }
+
+    // -------------------------
+    // Relationship getters only
+    // -------------------------
+
+    /** @return Collection|Review[] */
+    public function getReviews(): Collection
+    {
+        return $this->reviews;
+    }
+
+    /** @return Collection|ReviewVote[] */
     public function getReviewVotes(): Collection
     {
         return $this->reviewVotes;
     }
 
-    public function addReviewVote(ReviewVote $reviewVote): static
-    {
-        if (!$this->reviewVotes->contains($reviewVote)) {
-            $this->reviewVotes[] = $reviewVote;
-            $reviewVote->setUser($this);
-        }
-        return $this;
-    }
-
-    public function removeReviewVote(ReviewVote $reviewVote): static
-    {
-        if ($this->reviewVotes->removeElement($reviewVote)) {
-            // set the owning side to null (unless already changed)
-            if ($reviewVote->getUser() === $this) {
-                $reviewVote->setUser(null);
-            }
-        }
-        return $this;
-    }
-    /**
-     * @return Collection|Favorite[]
-     */
+    /** @return Collection|Favorite[] */
     public function getFavorites(): Collection
     {
         return $this->favorites;
-    }
-
-    public function addFavorite(Favorite $favorite): self
-    {
-        if (!$this->favorites->contains($favorite)) {
-            $this->favorites[] = $favorite;
-            $favorite->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeFavorite(Favorite $favorite): self
-    {
-        if ($this->favorites->removeElement($favorite)) {
-            // set the owning side to null (unless already changed)
-            if ($favorite->getUser() === $this) {
-                $favorite->setUser(null);
-            }
-        }
-
-        return $this;
     }
 }
