@@ -2,42 +2,41 @@
 
 namespace App\Repository;
 
-use App\Entity\Comment;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Model\Comment;
 
 /**
- * @extends ServiceEntityRepository<Comment>
+ * A safe-to-share repository skeleton for managing comments.
+ * No direct connection to a private database or sensitive entities.
  */
-class CommentRepository extends ServiceEntityRepository
+class CommentRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    /**
+     * Simulates fetching comments.
+     * Replace with actual database queries in your private project.
+     *
+     * @return Comment[]
+     */
+    public function findAll(): array
     {
-        parent::__construct($registry, Comment::class);
+        // Return an empty array or mock data
+        return [];
     }
 
-    //    /**
-    //     * @return Comment[] Returns an array of Comment objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('c.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Example method showing how you might filter comments.
+     */
+    public function findByExampleField($value): array
+    {
+        // Pseudo-logic: implement filtering in your private repo
+        return [];
+    }
 
-    //    public function findOneBySomeField($value): ?Comment
-    //    {
-    //        return $this->createQueryBuilder('c')
-    //            ->andWhere('c.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Example method showing how you might fetch a single comment.
+     */
+    public function findOneBySomeField($value): ?Comment
+    {
+        // Pseudo-logic: implement fetching in your private repo
+        return null;
+    }
 }
