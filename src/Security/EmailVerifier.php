@@ -2,51 +2,45 @@
 
 namespace App\Security;
 
-use App\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use App\Model\User;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mailer\MailerInterface;
-use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
-use SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 
+/**
+ * Safe-to-share version of EmailVerifier for public repositories.
+ * No actual email sending or database persistence is performed.
+ */
 class EmailVerifier
 {
-    public function __construct(
-        private VerifyEmailHelperInterface $verifyEmailHelper,
-        private MailerInterface $mailer,
-        private EntityManagerInterface $entityManager
-    ) {
-    }
-
-    public function sendEmailConfirmation(string $verifyEmailRouteName, User $user, TemplatedEmail $email): void
+    public function __construct()
     {
-        $signatureComponents = $this->verifyEmailHelper->generateSignature(
-            $verifyEmailRouteName,
-            (string) $user->getId(),
-            (string) $user->getEmail()
-        );
-
-        $context = $email->getContext();
-        $context['signedUrl'] = $signatureComponents->getSignedUrl();
-        $context['expiresAtMessageKey'] = $signatureComponents->getExpirationMessageKey();
-        $context['expiresAtMessageData'] = $signatureComponents->getExpirationMessageData();
-
-        $email->context($context);
-
-        $this->mailer->send($email);
+        // Dependencies removed for safety
     }
 
     /**
-     * @throws VerifyEmailExceptionInterface
+     * Mock sending email confirmation.
+     */
+    public function sendEmailConfirmation(string $verifyEmailRouteName, User $user, TemplatedEmail $email): void
+    {
+        // Mock logic: just set a dummy signed URL in the email context
+        $context = $email->getContext();
+        $context['signedUrl'] = 'https://example.com/verify?token=dummy';
+        $context['expiresAtMessageKey'] = 'dummy_expiry_key';
+        $context['expiresAtMessageData'] = ['expiry' => 'never'];
+
+        $email->context($context);
+
+        // No actual email sending
+    }
+
+    /**
+     * Mock handling email confirmation.
      */
     public function handleEmailConfirmation(Request $request, User $user): void
     {
-        $this->verifyEmailHelper->validateEmailConfirmationFromRequest($request, (string) $user->getId(), (string) $user->getEmail());
-
+        // Mock validation: assume email is always successfully verified
         $user->setVerified(true);
 
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+        // No database persistence
     }
 }
