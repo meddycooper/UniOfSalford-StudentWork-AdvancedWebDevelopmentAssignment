@@ -18,14 +18,15 @@
                 <tbody>
                 {% for user in users %}
                     <tr>
-                        <td>{{ user.email }}</td>
+                        {# Replace actual emails with placeholders #}
+                        <td>{{ 'user@example.com' }}</td>
                         <td>
                             {% for role in user.roles %}
                                 <span class="badge bg-info text-dark me-1">{{ role }}</span>
                             {% endfor %}
                         </td>
                         <td>
-                            <a href="{{ path('admin_edit_user', { id: user.id }) }}" class="btn btn-sm btn-primary">
+                            <a href="#" class="btn btn-sm btn-primary">
                                 Edit Roles
                             </a>
                         </td>
