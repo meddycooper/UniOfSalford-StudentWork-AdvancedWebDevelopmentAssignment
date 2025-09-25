@@ -5,7 +5,8 @@
 {% block body %}
     <div class="container mt-5">
         <div class="card shadow rounded p-4">
-            <h1 class="h4 mb-4">Edit Roles for <span class="text-primary">{{ user.email }}</span></h1>
+            {# Replace actual user email with a placeholder #}
+            <h1 class="h4 mb-4">Edit Roles for <span class="text-primary">{{ 'user@example.com' }}</span></h1>
 
             {{ form_start(form) }}
             <div class="mb-3">
@@ -18,7 +19,8 @@
             {{ form_end(form) }}
 
             <div class="mt-3">
-                <a href="{{ path('admin_users') }}" class="btn btn-outline-secondary">
+                {# Use a placeholder route for public safety #}
+                <a href="#" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left-circle me-1"></i>Back to User List
                 </a>
             </div>
