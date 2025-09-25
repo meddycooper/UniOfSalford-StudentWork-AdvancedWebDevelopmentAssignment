@@ -1,145 +1,85 @@
 <?php
 
 namespace App\Controller;
-use App\Entity\Book;
-use App\Entity\Review;
-use App\Repository\ReviewRepository;
-use App\Form\BookType;
-use App\Form\BookSearchType;
-use App\Model\BookSearchCriteria;
-use App\Repository\BookRepository;
-use Doctrine\ORM\EntityManagerInterface;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\String\Slugger\SluggerInterface;
-use App\Entity\Comment;
-use App\Form\CommentType;
+use Symfony\Component\HttpFoundation\Request;
 
 class BookController extends AbstractController
 {
     #[Route('/book', name: 'app_book')]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(): Response
     {
-        // Retrieve all books from the database using the Entity Manager
-        //$books = $entityManager->getRepository(Book::class)->findAll();
-        $books = $entityManager->getRepository(Book::class)->findBy([], ['title' => 'ASC']);
-        // Render the 'book/list.html.twig.twig' template and pass the book's data
+        // Portfolio-safe: mock books instead of querying database
+        $books = [
+            ['id' => 1, 'title' => 'Sample Book 1', 'author' => 'Author A'],
+            ['id' => 2, 'title' => 'Sample Book 2', 'author' => 'Author B'],
+        ];
+
         return $this->render('book/list.html.twig', [
             'books' => $books
         ]);
     }
+
     #[Route('/book/new', name: 'book_new')]
-    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    public function new(Request $request): Response
     {
-        $book = new Book();
-        $form = $this->createForm(BookType::class, $book);
+        // Portfolio-safe: demonstrate form usage without DB or file uploads
+        // $form = $this->createForm(BookType::class);
+        // $form->handleRequest($request);
 
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $coverFile = $form->get('coverImageFile')->getData(); // ⬅️ match form field name
-
-            if ($coverFile) {
-                $originalFilename = pathinfo($coverFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename . '-' . uniqid() . '.' . $coverFile->guessExtension();
-
-                try {
-                    $coverFile->move(
-                        $this->getParameter('cover_images_directory'),
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    // Optional: log or display error
-                }
-
-                $book->setCoverImage($newFilename); // ⬅️ Save filename to DB
-            }
-
-            $entityManager->persist($book);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('book_list');
-        }
+        // Normally here you would persist the new book to the database
 
         return $this->render('book/new.html.twig', [
-            'form' => $form->createView(),
+            'form' => 'Form placeholder for portfolio', // instead of $form->createView()
         ]);
     }
-    #[Route('/books', name: 'book_list')] // New route to list books
-    public function listBooks(EntityManagerInterface $entityManager): Response
-    {
-        // Retrieve all books from the database using the Entity Manager
-        // $books = $entityManager->getRepository(Book::class)->findAll();
-        $books = $entityManager->getRepository(Book::class)->findBy([], ['title' => 'ASC']);
-        // Render the 'book/list.html.twig.twig' template and pass the book's data
-        return $this->render('book/list.html.twig', [
-            'books' => $books
-        ]);
-    }
+
     #[Route('/book/{id<\d+>}', name: 'book_show')]
-    public function show(int $id, EntityManagerInterface $entityManager): Response
+    public function show(int $id): Response
     {
-        $book = $entityManager->getRepository(Book::class)->find($id);
-        if (!$book) {
-            throw $this->createNotFoundException('No book found for id ' . $id);
-        }
-        $user = $this->getUser();
-        $isFavorite = false;
-        if ($user && method_exists($user, 'getFavorites')) {
-            foreach ($user->getFavorites() as $favorite) {
-                if ($favorite->getBook() === $book) {
-                    $isFavorite = true;
-                    break;
-                }
-            }
-        }
-        // Get reviews for the book
-        $reviews = $book->getReviews();
-        $commentsByReview = [];
-        foreach ($reviews as $review) {
-            $comments = $entityManager->getRepository(Comment::class)->findBy(['review' => $review], ['createdAt' => 'ASC']);
-            $commentsByReview[$review->getId()] = $comments;
-        }
+        // Portfolio-safe: mock a single book with reviews
+        $book = ['id' => $id, 'title' => 'Sample Book ' . $id, 'author' => 'Author X'];
+        $reviews = [
+            ['id' => 1, 'rating' => 5, 'review_text' => 'Excellent book!', 'user' => 'user1', 'created_at' => '2025-01-01'],
+            ['id' => 2, 'rating' => 4, 'review_text' => 'Very good', 'user' => 'user2', 'created_at' => '2025-02-01'],
+        ];
+
         return $this->render('book/show.html.twig', [
             'book' => $book,
             'reviews' => $reviews,
-            'commentsByReview' => $commentsByReview,
-            'isFavorite' => $isFavorite,
+            'commentsByReview' => [], // skip comments for portfolio
+            'isFavorite' => false,
         ]);
     }
-    #[Route('/book/search', name: 'book_search')]
-    public function search(Request $request, BookRepository $bookRepository): Response
-    {
-        $searchCriteria = new BookSearchCriteria();
-        $form = $this->createForm(BookSearchType::class, $searchCriteria);
-        $form->handleRequest($request);
 
-        $books = $bookRepository->findBySearchCriteria($searchCriteria);
+    #[Route('/book/search', name: 'book_search')]
+    public function search(Request $request): Response
+    {
+        // Portfolio-safe: simulate search results
+        $query = $request->query->get('q', '');
+        $books = $query ? [
+            ['id' => 1, 'title' => $query . ' Book 1', 'author' => 'Author A'],
+            ['id' => 2, 'title' => $query . ' Book 2', 'author' => 'Author B'],
+        ] : [];
 
         return $this->render('book/search.html.twig', [
-            'form' => $form->createView(),
+            'form' => 'Search form placeholder', // instead of real form
             'books' => $books,
         ]);
     }
-    #[Route('/api/books/{bookId}/reviews', name: 'api_book_reviews', methods: ['GET'])]
-    public function getReviewsByBook(int $bookId, ReviewRepository $reviewRepository): JsonResponse
-    {
-        $reviews = $reviewRepository->findBy(['book' => $bookId]);
 
-        $data = array_map(function (Review $review) {
-            return [
-                'id' => $review->getId(),
-                'rating' => $review->getRating(),
-                'review_text' => $review->getReviewText(),
-                'user' => $review->getUser()?->getUserIdentifier(),
-                'created_at' => $review->getCreatedAt()->format('Y-m-d H:i:s'),
-            ];
-        }, $reviews);
+    #[Route('/api/books/{bookId}/reviews', name: 'api_book_reviews', methods: ['GET'])]
+    public function getReviewsByBook(int $bookId): JsonResponse
+    {
+        // Portfolio-safe: mock review data
+        $data = [
+            ['id' => 1, 'rating' => 5, 'review_text' => 'Excellent book!', 'user' => 'user1', 'created_at' => '2025-01-01 12:00:00'],
+            ['id' => 2, 'rating' => 4, 'review_text' => 'Very good', 'user' => 'user2', 'created_at' => '2025-02-01 09:30:00'],
+        ];
 
         return $this->json($data);
     }
