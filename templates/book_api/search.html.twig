@@ -6,20 +6,20 @@
     <div class="container mt-5">
         <h1 class="mb-4"><i class="bi bi-google me-2"></i>Search Google Books</h1>
 
-        <form method="get" action="{{ path('search_book') }}" class="mb-4">
+        <form method="get" action="#" class="mb-4">
             <div class="row g-2">
                 <div class="col-md-8 position-relative">
-                    <input type="text" id="search-input" name="q" value="{{ query }}" placeholder="Search books..." class="form-control" required autocomplete="off">
+                    <input type="text" id="search-input" name="q" value="" placeholder="Search books..." class="form-control" required autocomplete="off">
                     <ul id="autocomplete-results" class="list-group position-absolute w-100 z-3" style="top: 100%;"></ul>
                 </div>
                 <div class="col-md-3">
                     <select name="filter" class="form-select">
-                        <option value="" {% if filter == '' %}selected{% endif %}>All Fields</option>
-                        <option value="intitle" {% if filter == 'intitle' %}selected{% endif %}>Title</option>
-                        <option value="inauthor" {% if filter == 'inauthor' %}selected{% endif %}>Author</option>
-                        <option value="inpublisher" {% if filter == 'inpublisher' %}selected{% endif %}>Publisher</option>
-                        <option value="subject" {% if filter == 'subject' %}selected{% endif %}>Subject</option>
-                        <option value="isbn" {% if filter == 'isbn' %}selected{% endif %}>ISBN</option>
+                        <option value="" selected>All Fields</option>
+                        <option value="intitle">Title</option>
+                        <option value="inauthor">Author</option>
+                        <option value="inpublisher">Publisher</option>
+                        <option value="subject">Subject</option>
+                        <option value="isbn">ISBN</option>
                     </select>
                 </div>
                 <div class="col-md-1">
@@ -29,31 +29,23 @@
             <div class="form-text mt-2">Use the dropdown to search by title, author, publisher, subject, or ISBN.</div>
         </form>
 
-        {% if books %}
-            <h2 class="mb-3">Results:</h2>
-            <div class="row row-cols-1 row-cols-md-2 g-4">
-                {% for book in books %}
-                    <div class="col">
-                        <div class="card h-100 shadow-sm">
-                            {% if book.thumbnail %}
-                                <img src="{{ book.thumbnail }}" class="card-img-top" alt="Book cover">
-                            {% endif %}
-                            <div class="card-body">
-                                <h5 class="card-title">{{ book.title }}</h5>
-                                <p class="card-text"><strong>Authors:</strong> {{ book.authors|join(', ') }}</p>
-                                <p class="card-text">
-                                    {{ book.description|length > 250 ? book.description[:250] ~ '...' : book.description }}
-                                </p>
-                            </div>
+        <h2 class="mb-3">Results:</h2>
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            {% for i in 1..3 %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <img src="https://via.placeholder.com/150x220?text=Cover" class="card-img-top" alt="Book cover">
+                        <div class="card-body">
+                            <h5 class="card-title">Sample Book Title {{ i }}</h5>
+                            <p class="card-text"><strong>Authors:</strong> Author {{ i }}</p>
+                            <p class="card-text">
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...
+                            </p>
                         </div>
                     </div>
-                {% endfor %}
-            </div>
-        {% elseif query %}
-            <div class="alert alert-warning mt-4">
-                No results found for "<strong>{{ query }}</strong>".
-            </div>
-        {% endif %}
+                </div>
+            {% endfor %}
+        </div>
     </div>
 
     <script>
@@ -66,21 +58,19 @@
                     resultsBox.innerHTML = '';
                     return;
                 }
-                fetch(`/api/book/autocomplete?q=${encodeURIComponent(query)}`)
-                    .then(response => response.json())
-                    .then(data => {
+                // Dummy autocomplete for public-safe demo
+                const dummyResults = ['Sample Book 1', 'Sample Book 2', 'Sample Book 3'].filter(title => title.toLowerCase().includes(query.toLowerCase()));
+                resultsBox.innerHTML = '';
+                dummyResults.forEach(title => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item list-group-item-action';
+                    li.textContent = title;
+                    li.addEventListener('click', () => {
+                        input.value = title;
                         resultsBox.innerHTML = '';
-                        data.forEach(title => {
-                            const li = document.createElement('li');
-                            li.className = 'list-group-item list-group-item-action';
-                            li.textContent = title;
-                            li.addEventListener('click', () => {
-                                input.value = title;
-                                resultsBox.innerHTML = '';
-                            });
-                            resultsBox.appendChild(li);
-                        });
                     });
+                    resultsBox.appendChild(li);
+                });
             });
         });
     </script>
