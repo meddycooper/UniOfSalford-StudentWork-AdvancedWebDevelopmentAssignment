@@ -2,77 +2,48 @@
 
 namespace App\Repository;
 
-use App\Entity\Book;
 use App\Model\BookSearchCriteria;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Book>
+ * A safe-to-share repository skeleton for searching books.
+ * No direct link to your private database or sensitive project code.
  */
-class BookRepository extends ServiceEntityRepository
+class BookRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Book::class);
-    }
-
+    /**
+     * This method simulates finding books by criteria.
+     * Replace with actual database queries in your private project.
+     */
     public function findBySearchCriteria(BookSearchCriteria $criteria): array
     {
-        $qb = $this->createQueryBuilder('b');
+        // Example: return empty array to simulate results
+        $results = [];
 
+        // Pseudo-logic showing how you would filter results
         if ($criteria->title) {
-            $qb->andWhere('b.title LIKE :title')
-                ->setParameter('title', '%' . $criteria->title . '%');
+            // $results = filter books by title
         }
 
         if ($criteria->author) {
-            $qb->andWhere('b.author LIKE :author')
-                ->setParameter('author', '%' . $criteria->author . '%');
+            // $results = filter books by author
         }
 
         if ($criteria->genre) {
-            $qb->andWhere('b.genre = :genre')
-                ->setParameter('genre', $criteria->genre);
+            // $results = filter books by genre
         }
 
         if ($criteria->rating !== null) {
-            $qb->andWhere('b.averageRating >= :rating')
-                ->setParameter('rating', $criteria->rating);
+            // $results = filter books by rating
         }
+
         if ($criteria->minPages !== null) {
-            $qb->andWhere('b.pages >= :minPages')
-                ->setParameter('minPages', $criteria->minPages);
+            // $results = filter books by minPages
         }
 
         if ($criteria->maxPages !== null) {
-            $qb->andWhere('b.pages <= :maxPages')
-                ->setParameter('maxPages', $criteria->maxPages);
+            // $results = filter books by maxPages
         }
-        return $qb->getQuery()->getResult();
-    }
-    //    /**
-    //     * @return Book[] Returns an array of Book objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('b')
-    //            ->andWhere('b.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('b.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
 
-    //    public function findOneBySomeField($value): ?Book
-    //    {
-    //        return $this->createQueryBuilder('b')
-    //            ->andWhere('b.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        return $results;
+    }
 }
