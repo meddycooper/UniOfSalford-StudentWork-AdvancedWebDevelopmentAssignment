@@ -33,7 +33,7 @@ class Book
     #[ORM\Column(type: 'string', nullable: true)]
     private ?string $coverImage = null;
 
-    // One-to-many relationship with Review
+    // One-to-many relationship with Review entity
     #[ORM\OneToMany(mappedBy: 'book', targetEntity: Review::class)]
     private Collection $reviews;
 
@@ -41,6 +41,8 @@ class Book
     {
         $this->reviews = new ArrayCollection();
     }
+
+    // --- Basic getters & setters ---
 
     public function getId(): ?int
     {
@@ -52,7 +54,7 @@ class Book
         return $this->title;
     }
 
-    public function setTitle(string $title): static
+    public function setTitle(string $title): self
     {
         $this->title = $title;
         return $this;
@@ -63,7 +65,7 @@ class Book
         return $this->author;
     }
 
-    public function setAuthor(string $author): static
+    public function setAuthor(string $author): self
     {
         $this->author = $author;
         return $this;
@@ -74,12 +76,7 @@ class Book
         return $this->summary;
     }
 
-    public function getPages(): ?int
-    {
-        return $this->pages;
-    }
-
-    public function setSummary(string $summary): static
+    public function setSummary(string $summary): self
     {
         $this->summary = $summary;
         return $this;
@@ -90,37 +87,23 @@ class Book
         return $this->genre;
     }
 
-    public function setGenre(string $genre): static
+    public function setGenre(string $genre): self
     {
         $this->genre = $genre;
         return $this;
     }
 
-    // One-to-many getter for reviews
-    public function getReviews(): Collection
+    public function getPages(): ?int
     {
-        return $this->reviews;
-    }
-    public function getAverageRating(): ?float
-    {
-        $reviews = $this->getReviews();
-        if ($reviews->isEmpty()) {
-            return null; // No reviews yet
-        }
-
-        $totalRating = 0;
-        foreach ($reviews as $review) {
-            $totalRating += $review->getRating();
-        }
-
-        return round($totalRating / count($reviews), 1); // Average rating rounded to 1 decimal place
+        return $this->pages;
     }
 
-    public function setPages(int $pages): static
+    public function setPages(int $pages): self
     {
         $this->pages = $pages;
         return $this;
     }
+
     public function getCoverImage(): ?string
     {
         return $this->coverImage;
@@ -131,6 +114,33 @@ class Book
         $this->coverImage = $coverImage;
         return $this;
     }
+
+    // --- Relationships & computed fields ---
+
+    /**
+     * Returns all reviews associated with this book.
+     */
+    public function getReviews(): Collection
+    {
+        return $this->reviews;
+    }
+
+    /**
+     * Returns the average rating of the book based on reviews.
+     */
+    public function getAverageRating(): ?float
+    {
+        if ($this->reviews->isEmpty()) {
+            return null; // No reviews yet
+        }
+
+        $totalRating = array_sum(array_map(fn($r) => $r->getRating(), $this->reviews->toArray()));
+        return round($totalRating / $this->reviews->count(), 1);
+    }
+
+    /**
+     * Returns the total number of reviews for this book.
+     */
     public function getReviewCount(): int
     {
         return $this->reviews->count();
